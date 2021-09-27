@@ -78,7 +78,7 @@ export async function devnetTest() {
             { commitment: 'confirmed' },
         );
 
-        console.log('signature', signature)
+        console.log('sent', i + 1)
 
         // sleep for 1 sec for receiving transfer.
         await sleep(1000)
