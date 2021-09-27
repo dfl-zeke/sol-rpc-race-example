@@ -1,5 +1,6 @@
 dist
 node_modules
 test.json
+test.txt
 yarn.lock
 package-lock.json
