@@ -10,7 +10,6 @@ export const ACCOUNT_LAYOUT = BufferLayout.struct([
     BufferLayout.blob(93),
 ]);
 
-
 export async function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }

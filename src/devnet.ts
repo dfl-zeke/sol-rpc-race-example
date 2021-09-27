@@ -59,7 +59,7 @@ export async function devnetTest() {
     startListener(connection, fromWallet.publicKey)
 
     // SEND TRANSACTIONS TO TEST LISTENERw
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < 500; i++) {
         const transaction = new Transaction().add(
             Token.createTransferInstruction(
                 TOKEN_PROGRAM_ID,

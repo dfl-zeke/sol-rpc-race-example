@@ -1,12 +1,11 @@
 import { devnetTest } from "./devnet";
 import { mainnetTest } from "./mainnet";
-import fs from 'fs';
+
 
 async function main() {
-    const mnemonic = fs.readFileSync('test.txt', 'utf8')
-    
+    const mintAddress = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" // USDC Mint Address for testing
     await devnetTest()
-    // await mainnetTest(mnemonic)
+    await mainnetTest(mintAddress)
 }
 
 main()
