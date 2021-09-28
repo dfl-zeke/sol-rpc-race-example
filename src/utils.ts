@@ -3,6 +3,8 @@ import { Connection, PublicKey } from '@solana/web3.js';
 import * as BufferLayout from "buffer-layout";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
+export const receivedArray: string[] = []
+
 export const ACCOUNT_LAYOUT = BufferLayout.struct([
     BufferLayout.blob(32, 'mint'),
     BufferLayout.blob(32, 'owner'),
@@ -23,6 +25,7 @@ export function parseTokenAccountData(data: any) {
 export async function startListener(connection: Connection, publicKey: PublicKey) {
     connection.onProgramAccountChange(TOKEN_PROGRAM_ID, (info) => {
         const amount = parseTokenAccountData(info.accountInfo.data)
+        receivedArray.push(amount)
         console.log(`received ${amount}`);
     },
         'confirmed',

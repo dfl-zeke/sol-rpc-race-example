@@ -59,7 +59,7 @@ export async function devnetTest() {
     startListener(connection, fromWallet.publicKey)
 
     // SEND TRANSACTIONS TO TEST LISTENERw
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 10000; i++) {
         const transaction = new Transaction().add(
             Token.createTransferInstruction(
                 TOKEN_PROGRAM_ID,
@@ -71,14 +71,17 @@ export async function devnetTest() {
             ),
         );
 
-        const signature = await sendAndConfirmTransaction(
-            connection,
-            transaction,
-            [fromWallet],
-            { commitment: 'confirmed' },
-        );
-
         console.log('sent', i + 1)
+        try { // sometimes transactions got stuck.
+            await sendAndConfirmTransaction(
+                connection,
+                transaction,
+                [fromWallet],
+                { commitment: 'confirmed' },
+            );
+        } catch (error) {
+            console.log(error)
+        }
 
         // sleep for 1 sec for receiving transfer.
         await sleep(1000)

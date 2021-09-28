@@ -6,12 +6,14 @@ import {
     sendAndConfirmTransaction
 } from '@solana/web3.js';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { startListener, sleep } from './utils';
+import { startListener, sleep, receivedArray } from './utils';
 import * as bs58 from 'bs58';
 import fs from 'fs';
+import { isEqual } from 'lodash';
 
 
 export async function mainnetTest(mintAddress: string) {
+    const receivedListeners = []
     const privateKey = fs.readFileSync('test.txt', 'utf8')
     console.log(privateKey)
     const ragaca = bs58.decode(privateKey)
@@ -21,7 +23,7 @@ export async function mainnetTest(mintAddress: string) {
 
     // CREATE WALLET
     const fromWallet = Keypair.fromSecretKey(ragaca);
-    const toWallet = new PublicKey("F2793Cd7Cm91q28wLd964oGr94LF63EbzAUxHgLvNbz5")
+    const toWallet = new PublicKey("HNYLAm2fPQb1ccckz1jXgQ1rmvE2RZGwDzcYk71JeZ8J")
 
     console.log('fromWallet', fromWallet.publicKey.toBase58())
     console.log('toWallet', toWallet.toBase58())
@@ -59,7 +61,7 @@ export async function mainnetTest(mintAddress: string) {
     startListener(connection, toWallet)
 
     // SEND TRANSACTIONS TO TEST LISTENER
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 10000; i++) {
         const transaction = new Transaction().add(
             Token.createTransferInstruction(
                 TOKEN_PROGRAM_ID,
@@ -71,16 +73,26 @@ export async function mainnetTest(mintAddress: string) {
             )
         );
 
-        await sendAndConfirmTransaction(
-            connection,
-            transaction,
-            [fromWallet],
-            { commitment: 'confirmed' },
-        );
-
         console.log('sent', i + 1)
+        try {
+            await sendAndConfirmTransaction(
+                connection,
+                transaction,
+                [fromWallet],
+                { commitment: 'confirmed' },
+            );
 
+            receivedListeners.push(i + 1)
+        } catch (error) {
+            console.log(error)
+        }
         // sleep for 1 sec for receiving transfer.
         await sleep(1000)
     }
+
+    await sleep(5000) // wait for listeners for god's sake
+    const isAnyLeak = isEqual(receivedListeners, receivedArray)
+    console.log('receivedListeners', receivedListeners)
+    console.log('receivedArray ', receivedArray)
+    console.log(isAnyLeak)
 }
